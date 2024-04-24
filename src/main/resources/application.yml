@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: memberpj
+  datasource:
+    url: ${DB_URL}
+    username: root
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect # 추가 해준 부분
+    show-sql: true
+    properties:
+      hibernate:
+        ddl-auto: create
+#        Application 실행시 DB 초기화
+
+jwt:
+  issuer: 21yrshin@naver.com
+  secret_key: user-springboot
+  expiration_time: 86400000

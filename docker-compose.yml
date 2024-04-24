@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  spring:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_URL=jdbc:mysql://mysql:3308/memberpj?useSSL=false
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE: memberpj
+    ports:
+      - "3308:3308"
