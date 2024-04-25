@@ -3,7 +3,7 @@
 ## 기능 구현 사항
 
 - [x] 커밋 메시지 컨벤션 설정
-- [ ] ERD
+- [x] ERD
 - [ ] API 문서화
 - [ ] 구현
     - [ ] logging
@@ -12,3 +12,5 @@
 - [ ] 테스트 코드 작성
 
 # ERD 
+
+![](src/main/resources/static/schema.png)
