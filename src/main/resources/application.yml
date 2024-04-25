@@ -8,7 +8,7 @@ spring:
     password: ${MYSQL_PW}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
 #        Application 실행시 DB 초기화
     properties:
       hibernate:
@@ -21,10 +21,8 @@ spring:
 
   logging:
     level:
-      org:
-        springframework:
-          orm:
-            jpa: DEBUG
+      org.hibernate.SQL: debug
+      org.springframework.jdbc: debug
 
 jwt:
   issuer: 21yrshin@naver.com
