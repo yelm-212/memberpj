@@ -8,14 +8,16 @@ spring:
     password: ${MYSQL_PW}
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
 #        Application 실행시 DB 초기화
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
     show-sql: true
     open-in-view: true
+    defer-datasource-initialization: true
     profiles:
       include: create
 

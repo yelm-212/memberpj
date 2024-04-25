@@ -29,6 +29,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - DB_URL=jdbc:mysql://mysql:3306/memberpj?useSSl=false
+      - MYSQL_PW=12341234
     ports:
       - "8080:8080"
     depends_on:
