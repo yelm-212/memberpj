@@ -3,15 +3,28 @@ spring:
     name: memberpj
   datasource:
     url: ${DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
+    password: ${MYSQL_PW}
   jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect # 추가 해준 부분
-    show-sql: true
+    hibernate:
+      ddl-auto: create
+#        Application 실행시 DB 초기화
     properties:
       hibernate:
-        ddl-auto: create
-#        Application 실행시 DB 초기화
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+    open-in-view: true
+    profiles:
+      include: create
+
+  logging:
+    level:
+      org:
+        springframework:
+          orm:
+            jpa: DEBUG
 
 jwt:
   issuer: 21yrshin@naver.com
