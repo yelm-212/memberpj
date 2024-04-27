@@ -39,15 +39,14 @@ public class LoginController {
     @Transactional
     @PostMapping
     public ResponseEntity login(@Valid @RequestBody UserLoginDto loginDto) throws JsonProcessingException {
-        User member = mapper.loginDtoToUser(loginDto);
-        member.setEmail(loginDto.getUsername());
-        User authorizedMember = userService.loginMember(member);
+
+        User authorizedMember = userService.loginMember(loginDto);
 
         UserDto.UserResponseDto responseDto = mapper.userToUserResponseDto(authorizedMember);
         TokenResponseDto tokenResponseDto = jwtTokenizer.createTokenByLoginUser(responseDto);
 
         Map<String, Object> claims = jwtTokenizer.getClaims(tokenResponseDto.getAtk()).getBody();
-        long memberId = Long.parseLong(claims.get("memberId").toString());
+        long memberId = authorizedMember.getMemberId();
         User findmember = userService.findVerifiedUser(memberId);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + tokenResponseDto.getAtk());
@@ -55,7 +54,7 @@ public class LoginController {
         headers.add("roles", "user");
         headers.add("memberId", String.valueOf(findmember.getMemberId()));
 
-        return new ResponseEntity<>(new SingleResponseDto<>(mapper.userToUserResponseDto(findmember)), headers, HttpStatus.OK);
+        return new ResponseEntity<>(new SingleResponseDto<>(responseDto), headers, HttpStatus.OK);
 
     }
 }

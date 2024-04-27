@@ -25,6 +25,6 @@ spring:
       org.springframework.jdbc: debug
 
 jwt:
-  key: user-springboot
+  key: dajishflkajhdflkajhzsdfljkhadsflkjh123!!DF
   access-token-expiration-minutes: 999999
   refresh-token-expiration-minutes: 999999

@@ -1,6 +1,7 @@
 package com.yelm.memberpj.user.service;
 
 
+import com.yelm.memberpj.config.dto.UserLoginDto;
 import com.yelm.memberpj.exception.BusinessLogicException;
 import com.yelm.memberpj.exception.ExceptionCode;
 import com.yelm.memberpj.user.Role;
@@ -13,13 +14,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -86,8 +86,6 @@ public class UserService {
             return ResponseEntity.ok(new MultiResponseDto<>(pageusers.getContent(), pageusers));
         }
 
-
-
     }
 
     public User findVerifiedUser(Long memberId) {
@@ -96,10 +94,12 @@ public class UserService {
         else throw new BusinessLogicException(ExceptionCode.USER_NOT_FOUND);
     }
 
-    public User loginMember(User member){
-        User findMember = repository.findByEmail(member.getEmail()).orElseThrow(()->new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
+    public User loginMember(UserLoginDto dto){
+        User findMember = repository
+                .findByUsername(dto.getUsername())
+                .orElseThrow(()->new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
 
-        if(!encoder.matches(member.getPassword(), findMember.getPassword())){
+        if(!encoder.matches(dto.getPassword(), findMember.getPassword())){
             // throw new BusinessLogicException(ExceptionCode.PASSWORD_ERROR);
         }
 
