@@ -48,9 +48,10 @@ public class UserController {
     }
 
     @GetMapping("/{user-id}")
-    public ResponseEntity updateUser(@PathVariable("user-id") @Positive String userId,
+    public ResponseEntity updateUser(@PathVariable("user-id") String username,
                                      @RequestBody @Valid UserDto.PatchDto patchDto){
         // Todo: Service Layer Implementation
+        userService.patchUser(username, patchDto);
 
         // Todo: updated user info 함께 전달
         return new ResponseEntity(HttpStatus.ACCEPTED);
