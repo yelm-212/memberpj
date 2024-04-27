@@ -8,7 +8,7 @@ spring:
     password: ${MYSQL_PW}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 #        Application 실행시 DB 초기화
     properties:
       hibernate:

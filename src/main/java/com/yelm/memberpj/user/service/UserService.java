@@ -52,7 +52,6 @@ public class UserService {
     }
 
     public UserDto.UserResponseDto patchUser(String token, String username, UserDto.PatchDto dto){
-        // Todo: 실제 로직 구현
         Long userId = tokenService.findMemberIdByTokString(token);
 
         Optional<User> optionalUser = repository.findByUsername(username);
@@ -97,17 +96,10 @@ public class UserService {
 
     public ResponseEntity getUsers(String token, int page, int pageSize, String sort) {
         Page<UserDto.UserResponseDto> pageusers;
-
         tokenService.findRefreshToken(token);
 
-        if (!sort.isEmpty()){
-            pageusers = queryRepository.getUsers(PageRequest.of(page, pageSize));
-            return ResponseEntity.ok(new MultiResponseDto<>(pageusers.getContent(), pageusers));
-        }else {
-            pageusers = queryRepository.getUsers(PageRequest.of(page, pageSize), sort);
-            return ResponseEntity.ok(new MultiResponseDto<>(pageusers.getContent(), pageusers));
-        }
-
+        pageusers = queryRepository.getUsers(PageRequest.of(page - 1, pageSize), sort);
+        return ResponseEntity.ok(new MultiResponseDto<>(pageusers.getContent(), pageusers));
     }
 
     public User findVerifiedUser(Long memberId) {
