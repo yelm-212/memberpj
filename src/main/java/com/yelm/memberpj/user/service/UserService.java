@@ -1,8 +1,11 @@
-package com.yelm.memberpj.user;
+package com.yelm.memberpj.user.service;
 
 
 import com.yelm.memberpj.exception.BusinessLogicException;
 import com.yelm.memberpj.exception.ExceptionCode;
+import com.yelm.memberpj.user.Role;
+import com.yelm.memberpj.user.User;
+import com.yelm.memberpj.user.UserDto;
 import com.yelm.memberpj.user.repository.UserQueryRepository;
 import com.yelm.memberpj.user.repository.UserRepository;
 import com.yelm.memberpj.utils.dtos.MultiResponseDto;
@@ -36,6 +39,7 @@ public class UserService {
                         .username(userJoinDto.getUsername())
                         .password(encoder.encode(userJoinDto.getPassword()))
                         .nickname(userJoinDto.getNickname())
+                        .name(userJoinDto.getName())
                         .phonenumber(userJoinDto.getPhonenumber())
                         .email(userJoinDto.getEmail())
                         .createAt(LocalDateTime.now())
@@ -58,6 +62,8 @@ public class UserService {
                         .memberId(user.getMemberId())
                         .username(user.getUsername())
                         .password(encoder.encode(dto.getPassword()))
+                        .name(dto.getName() != null ?
+                                dto.getName() : user.getName())
                         .nickname(dto.getNickname() != null ?
                                 dto.getNickname() : user.getNickname())
                         .phonenumber(dto.getPhonenumber() != null ?
@@ -67,24 +73,6 @@ public class UserService {
                         .createAt(user.getCreateAt())
                         .role(user.getRole())
                         .build());
-    }
-
-    public User loginUser(UserDto.LoginDto loginDto) {
-        Optional<User> optionalUser = repository.findByUsername(loginDto.getUsername());
-
-        if(!optionalUser.isPresent()) {
-            throw new BusinessLogicException(ExceptionCode.USER_NOT_FOUND);
-        }
-
-        User user = optionalUser.get();
-
-        if(!encoder.matches(user.getPassword(), loginDto.getPassword())){
-            // Todo: Spring Security에서 처리로 전환
-            throw new BusinessLogicException(ExceptionCode.PASSWORD_ERR);
-        }
-
-        return user;
-
     }
 
     public ResponseEntity getUsers(int page, int pageSize, String sort) {
@@ -100,5 +88,21 @@ public class UserService {
 
 
 
+    }
+
+    public User findVerifiedUser(Long memberId) {
+        Optional<User> user = repository.findById(memberId);
+        if (user.isPresent()) return user.get();
+        else throw new BusinessLogicException(ExceptionCode.USER_NOT_FOUND);
+    }
+
+    public User loginMember(User member){
+        User findMember = repository.findByEmail(member.getEmail()).orElseThrow(()->new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
+
+        if(!encoder.matches(member.getPassword(), findMember.getPassword())){
+            // throw new BusinessLogicException(ExceptionCode.PASSWORD_ERROR);
+        }
+
+        return findMember;
     }
 }

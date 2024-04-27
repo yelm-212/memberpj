@@ -25,6 +25,9 @@ public class UserDto {
         @NotBlank(message = "공백이 아니어야 합니다.")
         @Size(min=1, max=30, message = "닉네임 길이는 최대 30입니다.")
         private String nickname;
+        @NotBlank(message = "공백이 아니어야 합니다.")
+        @Size(min=1, max=30, message = "이름의 길이는 최대 30입니다.")
+        private String name;
 
         @Pattern(regexp = "^010-\\d{3,4}-\\d{4}",message = "휴대폰 번호는 010으로 시작하는 11자리 숫자와 '-'로 구성되어야 합니다.")
         private String phonenumber;
@@ -43,6 +46,9 @@ public class UserDto {
 
         @Size(min=1, max=30, message = "닉네임 길이는 최대 30입니다.")
         private String nickname;
+        @NotBlank(message = "공백이 아니어야 합니다.")
+        @Size(min=1, max=30, message = "이름의 길이는 최대 30입니다.")
+        private String name;
 
         @Pattern(regexp = "^010-\\d{3,4}-\\d{4}",message = "휴대폰 번호는 010으로 시작하는 11자리 숫자와 '-'로 구성되어야 합니다.")
         private String phonenumber;
@@ -57,15 +63,17 @@ public class UserDto {
         private Long memberId;
         private String username;
         private String nickname;
+        private String name;
         private String phonenumber;
         private String email;
         private LocalDateTime createAt;
 
         @Builder
         @QueryProjection
-        public UserResponseDto(Long memberId, String username, String nickname, String phonenumber, String email, LocalDateTime createAt) {
+        public UserResponseDto(Long memberId, String name, String username, String nickname, String phonenumber, String email, LocalDateTime createAt) {
             this.memberId = memberId;
             this.username = username;
+            this.name = name;
             this.nickname = nickname;
             this.phonenumber = phonenumber;
             this.email = email;

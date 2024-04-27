@@ -1,9 +1,9 @@
 package com.yelm.memberpj.user;
 
 
+import com.yelm.memberpj.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,14 +26,6 @@ public class UserController {
     public ResponseEntity signup(@RequestBody @Valid UserDto.UserJoinDto userJoinDto){
 
         userService.postUser(userJoinDto);
-
-        return new ResponseEntity(HttpStatus.CREATED);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid UserDto.LoginDto loginDto){
-        // Todo: Service Layer Implementation
-        userService.loginUser(loginDto);
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
