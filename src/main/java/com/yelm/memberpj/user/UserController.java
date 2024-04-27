@@ -2,6 +2,7 @@ package com.yelm.memberpj.user;
 
 
 import com.yelm.memberpj.user.service.UserService;
+import com.yelm.memberpj.utils.dtos.SingleResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,21 +32,23 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity getUserList(@Positive @RequestParam int page,
+    public ResponseEntity getUserList(@RequestHeader(name = "Refresh") String token,
+                                    @Positive @RequestParam int page,
                                     @Positive @RequestParam int pageSize,
                                     @RequestParam(required = false, defaultValue = "") String sort){
         // Todo: Service Layer Implementation
 
-        return userService.getUsers(page, pageSize, sort);
+        return userService.getUsers(token, page, pageSize, sort);
     }
 
-    @GetMapping("/{user-id}")
-    public ResponseEntity updateUser(@PathVariable("user-id") String username,
+    @PatchMapping("/{username}")
+    public ResponseEntity updateUser(@RequestHeader(name = "Refresh") String token,
+                                     @PathVariable("username") String username,
                                      @RequestBody @Valid UserDto.PatchDto patchDto){
         // Todo: Service Layer Implementation
-        userService.patchUser(username, patchDto);
+//        userService.patchUser(token, username, patchDto);
 
         // Todo: updated user info 함께 전달
-        return new ResponseEntity(HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(new SingleResponseDto<>(userService.patchUser(token, username, patchDto)), HttpStatus.ACCEPTED);
     }
 }

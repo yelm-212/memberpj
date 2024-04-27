@@ -2,6 +2,8 @@ package com.yelm.memberpj.user.service;
 
 
 import com.yelm.memberpj.config.dto.UserLoginDto;
+import com.yelm.memberpj.config.refreshtoken.RefreshTokenRepository;
+import com.yelm.memberpj.config.refreshtoken.RefreshTokenService;
 import com.yelm.memberpj.exception.BusinessLogicException;
 import com.yelm.memberpj.exception.ExceptionCode;
 import com.yelm.memberpj.user.Role;
@@ -18,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -30,10 +31,13 @@ public class UserService {
 
     private final UserRepository repository;
     private final UserQueryRepository queryRepository;
+    private final RefreshTokenService tokenService;
     private final PasswordEncoder encoder;
 
     public User postUser(UserDto.UserJoinDto userJoinDto){
-        // Todo: 실제 로직 구현
+        if (!repository.findByUsername(userJoinDto.getUsername()).isPresent())
+            throw new BusinessLogicException(ExceptionCode.USER_EXISTS);
+
         return repository.save(
                 User.builder()
                         .username(userJoinDto.getUsername())
@@ -47,8 +51,10 @@ public class UserService {
                         .build());
     }
 
-    public User patchUser(String username, UserDto.PatchDto dto){
+    public UserDto.UserResponseDto patchUser(String token, String username, UserDto.PatchDto dto){
         // Todo: 실제 로직 구현
+        Long userId = tokenService.findMemberIdByTokString(token);
+
         Optional<User> optionalUser = repository.findByUsername(username);
 
         if (!optionalUser.isPresent()){
@@ -56,12 +62,16 @@ public class UserService {
         }
 
         User user = optionalUser.get();
+        if (user.getMemberId() != userId) {
+            throw new BusinessLogicException(ExceptionCode.USER_MISMATCH);
+        }
 
-        return repository.save(
+        User updatedUser = repository.save(
                 User.builder()
                         .memberId(user.getMemberId())
                         .username(user.getUsername())
-                        .password(encoder.encode(dto.getPassword()))
+                        .password(dto.getPassword() != null ?
+                                encoder.encode(dto.getPassword()) : user.getPassword())
                         .name(dto.getName() != null ?
                                 dto.getName() : user.getName())
                         .nickname(dto.getNickname() != null ?
@@ -73,10 +83,22 @@ public class UserService {
                         .createAt(user.getCreateAt())
                         .role(user.getRole())
                         .build());
+
+        return UserDto.UserResponseDto.builder()
+                .memberId(updatedUser.getMemberId())
+                .username(updatedUser.getUsername())
+                .nickname(updatedUser.getNickname())
+                .name(updatedUser.getName())
+                .phonenumber(updatedUser.getPhonenumber())
+                .email(updatedUser.getEmail())
+                .createAt(updatedUser.getCreateAt())
+                .build();
     }
 
-    public ResponseEntity getUsers(int page, int pageSize, String sort) {
+    public ResponseEntity getUsers(String token, int page, int pageSize, String sort) {
         Page<UserDto.UserResponseDto> pageusers;
+
+        tokenService.findRefreshToken(token);
 
         if (!sort.isEmpty()){
             pageusers = queryRepository.getUsers(PageRequest.of(page, pageSize));
@@ -97,11 +119,7 @@ public class UserService {
     public User loginMember(UserLoginDto dto){
         User findMember = repository
                 .findByUsername(dto.getUsername())
-                .orElseThrow(()->new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
-
-        if(!encoder.matches(dto.getPassword(), findMember.getPassword())){
-            // throw new BusinessLogicException(ExceptionCode.PASSWORD_ERROR);
-        }
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
 
         return findMember;
     }

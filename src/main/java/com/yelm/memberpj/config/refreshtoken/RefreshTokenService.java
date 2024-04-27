@@ -30,14 +30,13 @@ public class RefreshTokenService {
     @Transactional
     public RefreshToken findRefreshToken(String refreshToken) {
         RefreshToken token = refreshTokenRepository.findByValue(refreshToken)
-                .orElseThrow(()->new BusinessLogicException(ExceptionCode.REFRESH_NOT_FOUND));
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.REFRESH_NOT_FOUND));
 
         return token;
     }
 
-    @Transactional
-    public Optional<RefreshToken> findRefreshTokenOptional(String refreshToken) {
-        return refreshTokenRepository.findByValue(refreshToken);
+    public Long findMemberIdByTokString(String token) {
+        return findRefreshToken(token).getMemberId();
     }
 
 }
