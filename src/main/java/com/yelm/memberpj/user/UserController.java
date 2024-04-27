@@ -15,7 +15,6 @@ import javax.validation.constraints.Positive;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
-    //TODO: Controller Implementation
     private final UserService userService;
 
     @GetMapping("/hello")
@@ -36,7 +35,6 @@ public class UserController {
                                     @Positive @RequestParam int page,
                                     @Positive @RequestParam int pageSize,
                                     @RequestParam(required = false, defaultValue = "") String sort){
-        // Todo: Service Layer Implementation
 
         return userService.getUsers(token, page, pageSize, sort);
     }
@@ -45,10 +43,7 @@ public class UserController {
     public ResponseEntity updateUser(@RequestHeader(name = "Refresh") String token,
                                      @PathVariable("username") String username,
                                      @RequestBody @Valid UserDto.PatchDto patchDto){
-        // Todo: Service Layer Implementation
-//        userService.patchUser(token, username, patchDto);
 
-        // Todo: updated user info 함께 전달
         return new ResponseEntity<>(new SingleResponseDto<>(userService.patchUser(token, username, patchDto)), HttpStatus.ACCEPTED);
     }
 }
