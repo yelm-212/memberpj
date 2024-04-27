@@ -23,12 +23,8 @@ spring:
     level:
       org.hibernate.SQL: debug
       org.springframework.jdbc: debug
-  security:
-    user:
-      name: user
-      password: 1234
 
 jwt:
-  issuer: 21yrshin@naver.com
-  secret_key: user-springboot
-  expiration_time: 86400000
+  key: user-springboot
+  access-token-expiration-minutes: 999999
+  refresh-token-expiration-minutes: 999999
