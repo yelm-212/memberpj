@@ -10,3 +10,9 @@ CREATE TABLE users (
                         role varchar(64) not null,
                         primary key(member_id)
 );
+
+CREATE TABLE refresh_token (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    member_id BIGINT DEFAULT 0,
+    value VARCHAR(255)
+);
