@@ -14,5 +14,3 @@
 # ERD 
 
 ![](src/main/resources/static/schema.png)
-
-# [API 문서화](https://documenter.getpostman.com/view/28697445/2sA3BuV8nd)
